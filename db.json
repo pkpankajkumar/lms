@@ -1,0 +1,81 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "admin",
+      "mobileNo": "8773737737",
+      "email": "admin@lib.com",
+      "password": "admin123",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "name": "Test user",
+      "mobileNo": "8750388522",
+      "email": "user@lib.com",
+      "password": "user123",
+      "role": "user"
+    },
+    {
+      "id": "05d2",
+      "name": "pankaj",
+      "email": "pankaj.kushwaha1990@sansad.nic.in",
+      "mobileNo": "8750388521"
+    }
+  ],
+  "books": [
+    {
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "issuedTo": null,
+      "id": "1"
+    },
+    {
+      "title": "1984",
+      "author": "George Orwell dd",
+      "issuedTo": "user@lib.com",
+      "id": "2"
+    },
+    {
+      "id": "25f1",
+      "title": "testabc",
+      "author": "abc",
+      "issuedTo": "user@lib.com"
+    },
+    {
+      "id": "8b98",
+      "title": "fsdfd",
+      "author": "fdfds",
+      "issuedTo": "fdsfds"
+    },
+    {
+      "id": "aac6",
+      "title": "test",
+      "author": "testt",
+      "issuedTo": "fdfdfdf"
+    }
+  ],
+  "bookIssued":[
+
+    { "id": 1,
+      "bookId": 1,
+      "issuedTo": 1,
+      "fromDate":"04-06-2025",
+      "toDate":"30-06-2025",
+      "issueDate":"04-06-2025",
+      "returnDate":""
+      
+    },{
+      "id": 2,
+      "bookId": 2,
+      "issuedTo": 2,
+      "fromDate":"04-06-2025",
+      "toDate":"30-06-2025",
+      "issueDate":"04-06-2025",
+      "returnDate":""
+      
+    }
+
+
+  ]
+}
