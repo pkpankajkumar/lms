@@ -9,16 +9,16 @@ import EditIcon from '@mui/icons-material/Edit';
 
 const BookIssue = () => {
   const navigate = useNavigate();
-  const [books, setBooks] = useState([]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/books')
-      .then(res => setBooks(res?.data))
+    axios.get('http://localhost:5000/bookIssue')
+      .then(res => setData(res?.data))
       .catch(err => console.error(err));
   }, []);
 
   const handleEdit = (id) => {
-    navigate(`/books/edit/${id}`);
+    navigate(`/book-issue-list/edit/${id}`);
   };
 
   return (
@@ -27,27 +27,32 @@ const BookIssue = () => {
       <Box sx={{ display: 'flex' }}>
         <Sidebar />
         <Box p={4} sx={{ flexGrow: 1 }}>
-          <Typography variant="h4" gutterBottom>Book List</Typography>
+          <Typography variant="h4" gutterBottom>Book Issued</Typography>
           <Box display="flex" justifyContent="flex-end" mb={2}>
-            <Button variant="contained" color="primary" onClick={() => navigate('/books/add')}>
-              <AddIcon/>Add Book
+            <Button variant="contained" color="primary" onClick={() => navigate('/book-issue-list/issue')}>
+              <AddIcon/>Issue Book
             </Button>
           </Box>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Title</TableCell>
+                <TableCell>Book Title</TableCell>
                 <TableCell>Author</TableCell>
                 <TableCell>Issued To</TableCell>
+                <TableCell>Issued From Date</TableCell>
+                <TableCell>Issued To Date</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {books.map(book => (
+              {data.map(book => (
                 <TableRow key={book.id}>
                   <TableCell>{book.title}</TableCell>
                   <TableCell>{book.author}</TableCell>
                   <TableCell>{book.issuedTo || '-'}</TableCell>
+                  <TableCell>{book.fromDate || '-'}</TableCell>
+                  <TableCell>{book.toDate || '-'}</TableCell>
+
                   <TableCell>
                     <Button variant="outlined" color="primary" onClick={() => handleEdit(book.id)}>
                        <EditIcon/>Edit

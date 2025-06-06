@@ -10,6 +10,8 @@ import BookForm from './pages/BookForm';
 import Student from './pages/Student';
 import StudentForm from './pages/studentForm';
 
+import BookIssue from './pages/BookIssue';
+import BookIssueForm from './pages/BookIssueForm';
 
 
 const PrivateRoute = ({ children }) => {
@@ -34,9 +36,9 @@ function App() {
         <Route path="/student/add" element={<PrivateRoute><StudentForm /></PrivateRoute>} />
         <Route path="/student/edit/:id" element={<PrivateRoute><StudentForm /></PrivateRoute>} />
 
-         <Route path="/book-issue-list" element={<PrivateRoute><Student /></PrivateRoute>} />
-        <Route path="/student/add" element={<PrivateRoute><StudentForm /></PrivateRoute>} />
-        <Route path="/student/edit/:id" element={<PrivateRoute><StudentForm /></PrivateRoute>} />
+         <Route path="/book-issue-list" element={<PrivateRoute><BookIssue /></PrivateRoute>} />
+        <Route path="/book-issue-list/issue" element={<PrivateRoute><BookIssueForm /></PrivateRoute>} />
+        <Route path="/book-issue-list/edit/:id" element={<PrivateRoute><BookIssueForm /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

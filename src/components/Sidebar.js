@@ -16,7 +16,7 @@ const Sidebar = () => {
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
     { text: 'Student', icon: <AccountCircleIcon />, path: '/student' },
     { text: 'Books', icon: <MenuBookIcon />, path: '/books' },
-    { text: 'Book Issue', icon: <AddIcon />, path: '/books' },
+    { text: 'Book Issue', icon: <AddIcon />, path: '/book-issue-list' },
 
     { text: 'Change Password', icon: <VpnKeyIcon />, path: '/change-password' },
   ];

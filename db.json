@@ -55,7 +55,7 @@
       "issuedTo": "fdfdfdf"
     }
   ],
-  "bookIssued":[
+  "bookIssue":[
 
     { "id": 1,
       "bookId": 1,
