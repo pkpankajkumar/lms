@@ -15,7 +15,7 @@ import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 
-const BookIssueForm = () => {
+const BookRequestForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [book, setBook] = useState({
@@ -27,8 +27,7 @@ const BookIssueForm = () => {
     issueDate: '',
     returnDate: '',
     purpose:'',
-    isBookIssued:'NO',
-    status:''
+    status:'Request'
   });
 
   // Mock data – replace with API calls
@@ -39,10 +38,9 @@ const BookIssueForm = () => {
   ];
 
   const purposeList =[
-     { id: 1, name: 'I want to book return' },
-     { id: 2, name: 'I want to book date extend' },
+   //  { id: 1, name: 'I want to book return' },
+    { id: 2, name: 'I want to book date extend' },
      { id: 3, name: 'Change other information' },
-     { id: 4, name: 'Request Reject' },
   ];
 
   useEffect(() => {
@@ -61,28 +59,13 @@ const BookIssueForm = () => {
   console.log("book",book)
 
   const handleSubmit = async (e) => {
-
-    let newRequest;
-   
-    if(book.returnDate!=='' && (book.purpose===1 || book.purpose=="1")){
-      newRequest={...book,isBookIssued:'NO', status:'Returned'}
-
-    }else if(book.purpose===4 || book.purpose=="4"){
-
-      newRequest={...book,isBookIssued:'NO', status:'Rejected'}
-    }else{
-            newRequest={...book,isBookIssued:'YES', status:'Issued'}
-
-    }
-
-
     e.preventDefault();
     if (id) {
-      await axios.put(`http://localhost:5000/bookIssue/${id}`, newRequest);
+      await axios.put(`http://localhost:5000/bookIssue/${id}`, book);
     } else {
-      await axios.post('http://localhost:5000/bookIssue', newRequest);
+      await axios.post('http://localhost:5000/bookIssue', book);
     }
-    navigate('/book-issue-list');
+    navigate('/book-request-list');
   };
 
   return (
@@ -94,7 +77,7 @@ const BookIssueForm = () => {
           <Button onClick={() => navigate(-1)} sx={{ mb: 2 }}>
             ← Back
           </Button>
-          <Typography variant="h4" gutterBottom>{id ? 'Return/Extend Issued Book' : 'Issue Book'}</Typography>
+          <Typography variant="h4" gutterBottom>{id ? 'Edit Book Request/Order' : 'Book Request/Order'}</Typography>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={12} sm={6}>
@@ -201,7 +184,7 @@ const BookIssueForm = () => {
                 
                 
                 <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
-                  {id ? 'Submit' : 'Submit'}
+                  {id ? 'Update' : 'Submit Request/Order'}
                 </Button>
               </Grid>
 
@@ -217,4 +200,4 @@ const BookIssueForm = () => {
   );
 };
 
-export default BookIssueForm;
+export default BookRequestForm;

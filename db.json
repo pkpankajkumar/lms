@@ -6,7 +6,8 @@
       "mobileNo": "8773737737",
       "email": "admin@lib.com",
       "password": "admin123",
-      "role": "admin"
+      "role": "admin",
+      "rollNo": ""
     },
     {
       "id": "2",
@@ -14,68 +15,113 @@
       "mobileNo": "8750388522",
       "email": "user@lib.com",
       "password": "user123",
-      "role": "user"
+      "role": "user",
+      "rollNo": ""
     },
     {
-      "id": "05d2",
+      "id": "3",
       "name": "pankaj",
       "email": "pankaj.kushwaha1990@sansad.nic.in",
-      "mobileNo": "8750388521"
+      "mobileNo": "8750388521",
+      "password": "user123",
+      "role": "user",
+      "rollNo": ""
+    },
+    {
+      "id": "afe3",
+      "email": "test@lib.com",
+      "password": "Test@123",
+      "role": "user",
+      "mobileNo": "8750388521",
+      "name": "Test user"
     }
   ],
   "books": [
     {
-      "title": "The Great Gatsby",
+      "title": "Book1",
       "author": "F. Scott Fitzgerald",
       "issuedTo": null,
       "id": "1"
     },
     {
-      "title": "1984",
+      "title": "Book2",
       "author": "George Orwell dd",
       "issuedTo": "user@lib.com",
       "id": "2"
     },
     {
-      "id": "25f1",
-      "title": "testabc",
-      "author": "abc",
-      "issuedTo": "user@lib.com"
+      "id": "3",
+      "title": "Book3",
+      "author": "Decosta",
+      "issuedTo": ""
     },
     {
-      "id": "8b98",
-      "title": "fsdfd",
-      "author": "fdfds",
-      "issuedTo": "fdsfds"
+      "id": "4",
+      "title": "Book4",
+      "author": "St. stefen",
+      "issuedTo": ""
     },
     {
-      "id": "aac6",
-      "title": "test",
-      "author": "testt",
-      "issuedTo": "fdfdfdf"
+      "id": "5",
+      "title": "Book5",
+      "author": "Albert sem",
+      "issuedTo": ""
     }
   ],
-  "bookIssue":[
-
-    { "id": 1,
+  "bookIssue": [
+    {
+      "id": "1",
       "bookId": 1,
       "issuedTo": 1,
-      "fromDate":"04-06-2025",
-      "toDate":"30-06-2025",
-      "issueDate":"04-06-2025",
-      "returnDate":""
-      
-    },{
-      "id": 2,
+      "fromDate": "2025-06-05",
+      "toDate": "2025-06-28",
+      "issueDate": "2025-06-05",
+      "returnDate": "",
+      "purpose": 3,
+      "title": "Book B",
+      "author": "Chetan bhagat",
+      "isBookIssued": "YES",
+      "status": "Issued"
+    },
+    {
+      "id": "2",
       "bookId": 2,
       "issuedTo": 2,
-      "fromDate":"04-06-2025",
-      "toDate":"30-06-2025",
-      "issueDate":"04-06-2025",
-      "returnDate":""
-      
+      "fromDate": "2025-06-03",
+      "toDate": "2025-06-20",
+      "issueDate": "2025-06-03",
+      "returnDate": "2025-06-07",
+      "purpose": 1,
+      "title": "Book C",
+      "author": "S Kumar",
+      "isBookIssued": "NO",
+      "status": "Returned"
+    },
+    {
+      "id": "3",
+      "bookId": 3,
+      "issuedTo": 2,
+      "fromDate": "2025-06-03",
+      "toDate": "2025-06-20",
+      "issueDate": "2025-06-03",
+      "returnDate": "2025-06-07",
+      "title": "Book C",
+      "author": "fffefef",
+      "purpose": 4,
+      "isBookIssued": "NO",
+      "status": "Rejected"
+    },
+    {
+      "id": "fb81",
+      "title": "Book A",
+      "author": "acb",
+      "issuedTo": 2,
+      "fromDate": "2025-06-07",
+      "toDate": "2025-06-19",
+      "issueDate": "2025-06-04",
+      "returnDate": "",
+      "purpose": "",
+      "status": "Request"
     }
-
-
   ]
 }

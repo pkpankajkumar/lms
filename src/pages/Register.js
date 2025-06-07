@@ -6,15 +6,19 @@ import API from '../services/api'; // assumes API is axios instance pointing to 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [mobileNo, setMobileNo] = useState('');
+  const [name, setName] = useState('');
+
+
   const navigate = useNavigate();
-const backgroundImage = 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1350&q=80';
+  const backgroundImage = 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1350&q=80';
 
   const handleRegister = async () => {
-    if (!email.trim() || !password.trim()) return alert('Please fill in all fields');
+    if (!email.trim() || !password.trim() || !name.trim() || !mobileNo.trim()) return alert('Please fill in all fields');
     try {
       const res = await API.get(`/users?email=${email}`);
       if (res.data.length > 0) return alert('Email already registered');
-      await API.post('/users', { email, password, role: 'user' });
+      await API.post('/users', { email,name, password, role: 'user',mobileNo });
       alert('Registration successful');
       navigate('/login');
     } catch (err) {
@@ -23,7 +27,7 @@ const backgroundImage = 'https://images.unsplash.com/photo-1524995997946-a1c2e31
   };
 
   return (
- <Box
+    <Box
       sx={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
@@ -39,10 +43,19 @@ const backgroundImage = 'https://images.unsplash.com/photo-1524995997946-a1c2e31
             Register
           </Typography>
           <TextField
+            label="Name"
+            fullWidth
+            margin="normal"
+            value={name}
+            name="name"
+            onChange={e => setName(e.target.value)}
+          />
+          <TextField
             label="Email"
             fullWidth
             margin="normal"
             value={email}
+            name="email"
             onChange={e => setEmail(e.target.value)}
           />
           <TextField
@@ -50,8 +63,19 @@ const backgroundImage = 'https://images.unsplash.com/photo-1524995997946-a1c2e31
             type="password"
             fullWidth
             margin="normal"
+            name="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
+          />
+
+          <TextField
+            label="Mobile No"
+            type="text"
+            fullWidth
+            margin="normal"
+            name="mobileNo"
+            value={mobileNo}
+            onChange={e => setMobileNo(e.target.value)}
           />
           <Button variant="contained" fullWidth sx={{ mt: 2 }} onClick={handleRegister}>
             Register

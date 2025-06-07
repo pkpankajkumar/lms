@@ -7,7 +7,7 @@ import Sidebar from '../components/Sidebar';
 const BookForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [book, setBook] = useState({ title: '', author: '', issuedTo: '' });
+  const [book, setBook] = useState({ title: '', author: '', });
 
   useEffect(() => {
     if (id) {
@@ -59,14 +59,7 @@ const BookForm = () => {
             fullWidth
             margin="normal"
           />
-          <TextField
-            label="Issued To (optional)"
-            name="issuedTo"
-            value={book.issuedTo}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
+         
           <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
             {id ? 'Update' : 'Add'} Book
           </Button>

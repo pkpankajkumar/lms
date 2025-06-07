@@ -12,6 +12,9 @@ import StudentForm from './pages/studentForm';
 
 import BookIssue from './pages/BookIssue';
 import BookIssueForm from './pages/BookIssueForm';
+import BookAvailable from './pages/BookAvailable';
+import BookRequest from './pages/BookRequest';
+import BookRequestForm from './pages/BookRequestForm';
 
 
 const PrivateRoute = ({ children }) => {
@@ -27,7 +30,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/change-password" element={<PrivateRoute><ChangePassword /></PrivateRoute>} />
+
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+
         <Route path="/books" element={<PrivateRoute><BookList /></PrivateRoute>} />
         <Route path="/books/add" element={<PrivateRoute><BookForm /></PrivateRoute>} />
         <Route path="/books/edit/:id" element={<PrivateRoute><BookForm /></PrivateRoute>} />
@@ -36,9 +41,16 @@ function App() {
         <Route path="/student/add" element={<PrivateRoute><StudentForm /></PrivateRoute>} />
         <Route path="/student/edit/:id" element={<PrivateRoute><StudentForm /></PrivateRoute>} />
 
-         <Route path="/book-issue-list" element={<PrivateRoute><BookIssue /></PrivateRoute>} />
+        <Route path="/book-issue-list" element={<PrivateRoute><BookIssue /></PrivateRoute>} />
         <Route path="/book-issue-list/issue" element={<PrivateRoute><BookIssueForm /></PrivateRoute>} />
         <Route path="/book-issue-list/edit/:id" element={<PrivateRoute><BookIssueForm /></PrivateRoute>} />
+       
+        <Route path="/book-available-list" element={<PrivateRoute><BookAvailable /></PrivateRoute>} />
+       
+        <Route path="/book-request-list" element={<PrivateRoute><BookRequest/></PrivateRoute>} />
+        <Route path="/book-request-list/request" element={<PrivateRoute><BookRequestForm /></PrivateRoute>} />
+        <Route path="/book-request-list/edit/:id" element={<PrivateRoute><BookRequestForm /></PrivateRoute>} />
+
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

@@ -17,10 +17,11 @@ import Header from '../components/Header';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 
-const BookIssue = () => {
+const BookRequest = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const user = JSON.parse(localStorage.getItem('user')); // <-- Parse stored user JSON
 
   useEffect(() => {
     axios
@@ -30,18 +31,27 @@ const BookIssue = () => {
   }, []);
 
   const handleEdit = (id) => {
-    navigate(`/book-issue-list/edit/${id}`);
+    navigate(`/book-request-list/edit/${id}`);
   };
 
-  const filteredData = data.filter((book) => {
-  const lowerSearch = searchTerm.toLowerCase();
+ const filteredData = data
+  .filter((book) => {
+    const lowerSearch = searchTerm.toLowerCase();
+    return (
+      (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
+      (book.author?.toLowerCase?.().includes(lowerSearch) ?? false) ||
+      (typeof book.issuedTo === 'string' &&
+        book.issuedTo.toLowerCase().includes(lowerSearch))
+    );
+  })
+  .filter((book) => {
+    const issuedToStr = String(book.issuedTo).trim().toLowerCase();
+    const userNameStr = String(user?.name || '').trim().toLowerCase();
+    const userIdStr = String(user?.id || '').trim().toLowerCase();
 
-  return (
-    (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
-    (book.author?.toLowerCase?.().includes(lowerSearch) ?? false) ||
-    (typeof book.issuedTo === 'string' && book.issuedTo.toLowerCase().includes(lowerSearch))
-  );
-});
+    return issuedToStr === userNameStr || issuedToStr === userIdStr;
+  });
+
 
   return (
     <>
@@ -50,7 +60,7 @@ const BookIssue = () => {
         <Sidebar />
         <Box p={4} sx={{ flexGrow: 1 }}>
           <Typography variant="h4" gutterBottom>
-            Book Issue/Return
+          Book Request/Order
           </Typography>
 
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -64,10 +74,10 @@ const BookIssue = () => {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => navigate('/book-issue-list/issue')}
+              onClick={() => navigate('/book-request-list/request')}
               startIcon={<AddIcon />}
             >
-              Issue Book
+              Add Request
             </Button>
           </Box>
 
@@ -79,9 +89,8 @@ const BookIssue = () => {
                 <TableCell>Issued To</TableCell>
                 <TableCell>Issued From Date</TableCell>
                 <TableCell>Issued To Date</TableCell>
-                 <TableCell>Status of Order</TableCell>
-                
-                <TableCell>Actions</TableCell>
+                <TableCell>Status of Order</TableCell>
+                {/* <TableCell>Actions</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -93,8 +102,9 @@ const BookIssue = () => {
                     <TableCell>{book.issuedTo || '-'}</TableCell>
                     <TableCell>{book.fromDate || '-'}</TableCell>
                     <TableCell>{book.toDate || '-'}</TableCell>
-                     <TableCell>{book.status || '-'}</TableCell>
-                    <TableCell>
+                    <TableCell>{book.status || '-'}</TableCell>
+
+                    {/* <TableCell>
                       <Button
                         variant="outlined"
                         color="primary"
@@ -103,7 +113,7 @@ const BookIssue = () => {
                       >
                         Edit
                       </Button>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))
               ) : (
@@ -121,4 +131,4 @@ const BookIssue = () => {
   );
 };
 
-export default BookIssue;
+export default BookRequest;
