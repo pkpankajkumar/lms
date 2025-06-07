@@ -10,27 +10,58 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const Student = () => {
   const navigate = useNavigate();
   const [student, setStudent] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
 
   useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const fetchStudents = () => {
     axios
       .get('http://localhost:5000/users')
       .then((res) => setStudent(res?.data))
       .catch((err) => console.error(err));
-  }, []);
+  };
 
   const handleEdit = (id) => {
     navigate(`/student/edit/${id}`);
+  };
+
+  const handleDeleteConfirm = (id) => {
+    setStudentToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    axios
+      .delete(`http://localhost:5000/users/${studentToDelete}`)
+      .then(() => {
+        setStudent((prev) => prev.filter((s) => s.id !== studentToDelete));
+        setDeleteDialogOpen(false);
+        setStudentToDelete(null);
+      })
+      .catch((err) => {
+        console.error(err);
+        setDeleteDialogOpen(false);
+      });
   };
 
   const filteredStudents = student.filter((st) => {
@@ -92,8 +123,17 @@ const Student = () => {
                         color="primary"
                         onClick={() => handleEdit(st.id)}
                         startIcon={<EditIcon />}
+                        sx={{ mr: 1 }}
                       >
                         Edit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => handleDeleteConfirm(st.id)}
+                        startIcon={<DeleteIcon />}
+                      >
+                        Delete
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -109,6 +149,22 @@ const Student = () => {
           </Table>
         </Box>
       </Box>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Are you sure you want to delete this student?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

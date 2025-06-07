@@ -18,31 +18,45 @@ import Header from '../components/Header';
 const BookIssueForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [bookAll, setBookAll] = useState([]);
+
   const [book, setBook] = useState({
-    title: '',
+    bookId: '',
     author: '',
     issuedTo: '',
     fromDate: '',
     toDate: '',
     issueDate: '',
     returnDate: '',
-    purpose:'',
-    isBookIssued:'NO',
-    status:''
+    purpose: '',
+    isBookIssued: 'NO',
+    status: ''
   });
+  const [users, setUsers] = useState([]);
 
   // Mock data – replace with API calls
-  const bookTitles = ['Book A', 'Book B', 'Book C'];
-  const users = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-  ];
+  useEffect(() => {
+    axios
+      .get('http://localhost:5000/books')
+      .then((res) => setBookAll(res?.data))
+      .catch((err) => console.error(err));
+  }, []);
 
-  const purposeList =[
-     { id: 1, name: 'I want to book return' },
-     { id: 2, name: 'I want to book date extend' },
-     { id: 3, name: 'Change other information' },
-     { id: 4, name: 'Request Reject' },
+  useEffect(() => {
+    axios
+      .get('http://localhost:5000/users')
+      .then((res) => setUsers(res?.data))
+      .catch((err) => console.error(err));
+  }, []);
+
+
+  const purposeList = [
+    { id: 1, name: 'I want to book return' },
+    { id: 2, name: 'I want to book date extend' },
+    { id: 3, name: 'Change other information' },
+    { id: 4, name: 'Request Reject' },
+    { id: 5, name: 'Request Accept' },
+
   ];
 
   useEffect(() => {
@@ -58,20 +72,20 @@ const BookIssueForm = () => {
   };
 
 
-  console.log("book",book)
+  console.log("book", book)
 
   const handleSubmit = async (e) => {
 
     let newRequest;
-   
-    if(book.returnDate!=='' && (book.purpose===1 || book.purpose=="1")){
-      newRequest={...book,isBookIssued:'NO', status:'Returned'}
 
-    }else if(book.purpose===4 || book.purpose=="4"){
+    if (book.returnDate !== '' && (book.purpose === 1 || book.purpose == "1")) {
+      newRequest = { ...book, isBookIssued: 'NO', status: 'Returned' }
 
-      newRequest={...book,isBookIssued:'NO', status:'Rejected'}
-    }else{
-            newRequest={...book,isBookIssued:'YES', status:'Issued'}
+    } else if (book.purpose === 4 || book.purpose == "4") {
+
+      newRequest = { ...book, isBookIssued: 'NO', status: 'Rejected' }
+    } else {
+      newRequest = { ...book, isBookIssued: 'YES', status: 'Issued' }
 
     }
 
@@ -101,25 +115,25 @@ const BookIssueForm = () => {
                 <FormControl fullWidth >
                   <InputLabel>Book Title</InputLabel>
                   <Select
-                    name="title"
-                    value={book.title}
+                    name="bookId"
+                    value={book.bookId}
                     onChange={handleChange}
                     label="Book Title"
                   >
-                    {bookTitles.map((title) => (
-                      <MenuItem key={title} value={title}>{title}</MenuItem>
+                    {bookAll.map((bk) => (
+                      <MenuItem key={bk.id} value={bk.id}>{bk.title}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
 
-                <TextField
+                {/* <TextField
                   label="Book Author"
                   name="author"
                   value={book.author}
                   onChange={handleChange}
                   fullWidth
                   sx={{ mt: 2 }}
-                />
+                /> */}
 
                 <FormControl fullWidth sx={{ mt: 2 }}>
                   <InputLabel>Issued To</InputLabel>
@@ -169,37 +183,37 @@ const BookIssueForm = () => {
                   InputLabelProps={{ shrink: true }}
                   sx={{ mt: 2 }}
                 />
-            { id &&  (
-                 <FormControl fullWidth sx={{ mt: 2 }}>
-                  <InputLabel>Purpose of update</InputLabel>
-                  <Select
-                    name="purpose"
-                    value={book.purpose || ''}
-                    onChange={handleChange}
-                    label="Issued To"
-                  >
-                    {purposeList.map((perpose) => (
-                      <MenuItem key={perpose.id} value={perpose.id}>
-                        {perpose.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                {id && (
+                  <FormControl fullWidth sx={{ mt: 2 }}>
+                    <InputLabel>Purpose of update</InputLabel>
+                    <Select
+                      name="purpose"
+                      value={book.purpose || ''}
+                      onChange={handleChange}
+                      label="Issued To"
+                    >
+                      {purposeList.map((perpose) => (
+                        <MenuItem key={perpose.id} value={perpose.id}>
+                          {perpose.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 )}
-               { id && book.purpose === 1 && (
-                <TextField
-                  label="Return Date"
-                  type="date"
-                  name="returnDate"
-                  value={book.returnDate}
-                  onChange={handleChange}
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
-                  sx={{ mt: 2 }}
-                />
-              )}
-                
-                
+                {id && book.purpose === 1 && (
+                  <TextField
+                    label="Return Date"
+                    type="date"
+                    name="returnDate"
+                    value={book.returnDate}
+                    onChange={handleChange}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ mt: 2 }}
+                  />
+                )}
+
+
                 <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
                   {id ? 'Submit' : 'Submit'}
                 </Button>

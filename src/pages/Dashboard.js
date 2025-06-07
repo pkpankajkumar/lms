@@ -1,12 +1,48 @@
-import React from 'react';
+import {React,useEffect,useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Typography, Box, Grid } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import CardGenerator from './CardGenerator'
+import axios from 'axios';
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
+
+   const [data, setData] = useState([]);
+  const [issuedCount, setIssuedCount] = useState(0);
+  const [rejectedCount, setRejectedCount] = useState(0);
+  const [requestCount, setRequestCount] = useState(0);
+  const [availableCount, setAvailableCount] = useState(0);
+
+ useEffect(() => {
+  axios
+    .get('http://localhost:5000/bookIssue')
+    .then((res) => {
+      let fetchedData = res?.data || [];
+
+      if (user?.role !== 'admin') {
+        fetchedData = fetchedData.filter((item) => item.issuedTo === user.username);
+      }
+
+      setData(fetchedData);
+
+      const issued = fetchedData.filter((item) => item.status === 'Issued').length;
+      const rejected = fetchedData.filter((item) => item.status === 'Rejected').length;
+      const request = fetchedData.filter((item) => item.status === 'Request').length;
+      const available = fetchedData.filter(
+        (item) => item.status !== 'Issued' && item.status !== 'Request'
+      ).length;
+
+      setIssuedCount(issued);
+      setRejectedCount(rejected);
+      setRequestCount(request);
+      setAvailableCount(available);
+    })
+    .catch((err) => console.error(err));
+}, []);
+
   return (
     <>
       <Header />
@@ -19,9 +55,9 @@ const Dashboard = () => {
               <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                 <CardGenerator
                   key={1}
-                  text="Total Book Issued 102"
+                  text={`Total Book Issued(${issuedCount})`}
                   img
-                  url="/book-issue-list"
+                  url="/book-request-list"
                   imgUrl="svg/cardArrow.svg"
                   borderColor="#016944"
                   textColor="#282828"
@@ -31,9 +67,35 @@ const Dashboard = () => {
               <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                 <CardGenerator
                   key={2}
-                  text="Total Book Available 20"
+                  text={`Total Book Available(${availableCount})`}
                   img
-                  url="/book-available-list"
+                  url="/book-request-list"
+                  imgUrl="svg/cardArrow.svg"
+                  borderColor="#016944"
+                  textColor="#282828"
+                  iconColor="#A3DBC7"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+                <CardGenerator
+                  key={2}
+                  text={`Total Request Order Book for issue(${requestCount})`}
+                  img
+                  url="/book-request-list"
+                  imgUrl="svg/cardArrow.svg"
+                  borderColor="#016944"
+                  textColor="#282828"
+                  iconColor="#A3DBC7"
+                />
+              </Grid>
+
+                <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+                <CardGenerator
+                  key={2}
+                  text={`Total Request Reject Count(${rejectedCount})`}
+                  img
+                  url="/book-request-list"
                   imgUrl="svg/cardArrow.svg"
                   borderColor="#016944"
                   textColor="#282828"

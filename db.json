@@ -19,15 +19,6 @@
       "rollNo": ""
     },
     {
-      "id": "3",
-      "name": "pankaj",
-      "email": "pankaj.kushwaha1990@sansad.nic.in",
-      "mobileNo": "8750388521",
-      "password": "user123",
-      "role": "user",
-      "rollNo": ""
-    },
-    {
       "id": "afe3",
       "email": "test@lib.com",
       "password": "Test@123",
@@ -77,7 +68,7 @@
       "toDate": "2025-06-28",
       "issueDate": "2025-06-05",
       "returnDate": "",
-      "purpose": 3,
+      "purpose": 5,
       "title": "Book B",
       "author": "Chetan bhagat",
       "isBookIssued": "YES",
@@ -112,16 +103,30 @@
       "status": "Rejected"
     },
     {
-      "id": "fb81",
-      "title": "Book A",
+      "id": "4",
+      "bookId": 4,
       "author": "acb",
       "issuedTo": 2,
       "fromDate": "2025-06-07",
       "toDate": "2025-06-19",
       "issueDate": "2025-06-04",
       "returnDate": "",
-      "purpose": "",
-      "status": "Request"
+      "purpose": 4,
+      "status": "Rejected",
+      "isBookIssued": "NO"
+    },
+    {
+      "id": "ab3d",
+      "bookId": "1",
+      "author": "",
+      "issuedTo": "2",
+      "fromDate": "2025-06-07",
+      "toDate": "2025-06-07",
+      "issueDate": "2025-06-07",
+      "returnDate": "",
+      "purpose": 5,
+      "status": "Issued",
+      "isBookIssued": "YES"
     }
   ]
 }

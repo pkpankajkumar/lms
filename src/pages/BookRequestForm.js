@@ -17,11 +17,13 @@ import Header from '../components/Header';
 
 const BookRequestForm = () => {
   const { id } = useParams();
+  const user = JSON.parse(localStorage.getItem('user')); // <-- Parse stored user JSON
+
   const navigate = useNavigate();
-  const [book, setBook] = useState({
-    title: '',
+  const [bookRequest, setBookRequest] = useState({
+    bookId: '',
     author: '',
-    issuedTo: '',
+    issuedTo: user?.id,
     fromDate: '',
     toDate: '',
     issueDate: '',
@@ -29,13 +31,8 @@ const BookRequestForm = () => {
     purpose:'',
     status:'Request'
   });
-
-  // Mock data – replace with API calls
-  const bookTitles = ['Book A', 'Book B', 'Book C'];
-  const users = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-  ];
+const [booksAvailabs, setBooksAvailabs] = useState([{}]);
+  
 
   const purposeList =[
    //  { id: 1, name: 'I want to book return' },
@@ -43,27 +40,35 @@ const BookRequestForm = () => {
      { id: 3, name: 'Change other information' },
   ];
 
+    useEffect(() => {
+      axios
+        .get('http://localhost:5000/books')
+        .then((res) => setBooksAvailabs(res?.data))
+        .catch((err) => console.error(err));
+    }, []);
+
   useEffect(() => {
     if (id) {
       axios.get(`http://localhost:5000/bookIssue/${id}`)
-        .then(res => setBook(res.data))
+        .then(res => setBookRequest(res.data))
         .catch(err => console.error(err));
     }
   }, [id]);
 
   const handleChange = (e) => {
-    setBook({ ...book, [e.target.name]: e.target.value });
+    console.log( e.target.value)
+    setBookRequest({ ...bookRequest, [e.target.name]: e.target.value });
   };
 
 
-  console.log("book",book)
+  console.log("book",bookRequest)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (id) {
-      await axios.put(`http://localhost:5000/bookIssue/${id}`, book);
+      await axios.put(`http://localhost:5000/bookIssue/${id}`, bookRequest);
     } else {
-      await axios.post('http://localhost:5000/bookIssue', book);
+      await axios.post('http://localhost:5000/bookIssue', bookRequest);
     }
     navigate('/book-request-list');
   };
@@ -84,27 +89,27 @@ const BookRequestForm = () => {
                 <FormControl fullWidth >
                   <InputLabel>Book Title</InputLabel>
                   <Select
-                    name="title"
-                    value={book.title}
+                    name="bookId"
+                    value={bookRequest.bookId}
                     onChange={handleChange}
                     label="Book Title"
                   >
-                    {bookTitles.map((title) => (
-                      <MenuItem key={title} value={title}>{title}</MenuItem>
+                    {booksAvailabs?.map((bal) => (
+                      <MenuItem key={bal.id} value={bal.id}>{bal.title}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
 
-                <TextField
+                {/* <TextField
                   label="Book Author"
                   name="author"
                   value={book.author}
                   onChange={handleChange}
                   fullWidth
                   sx={{ mt: 2 }}
-                />
+                /> */}
 
-                <FormControl fullWidth sx={{ mt: 2 }}>
+                {/* <FormControl fullWidth sx={{ mt: 2 }}>
                   <InputLabel>Issued To</InputLabel>
                   <Select
                     name="issuedTo"
@@ -118,13 +123,13 @@ const BookRequestForm = () => {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
 
                 <TextField
                   label="Issue Date"
                   type="date"
                   name="issueDate"
-                  value={book.issueDate}
+                  value={bookRequest.issueDate}
                   onChange={handleChange}
                   fullWidth
                   InputLabelProps={{ shrink: true }}
@@ -135,7 +140,7 @@ const BookRequestForm = () => {
                   label="From Date"
                   type="date"
                   name="fromDate"
-                  value={book.fromDate}
+                  value={bookRequest.fromDate}
                   onChange={handleChange}
                   fullWidth
                   InputLabelProps={{ shrink: true }}
@@ -146,7 +151,7 @@ const BookRequestForm = () => {
                   label="To Date"
                   type="date"
                   name="toDate"
-                  value={book.toDate}
+                  value={bookRequest.toDate}
                   onChange={handleChange}
                   fullWidth
                   InputLabelProps={{ shrink: true }}
@@ -157,7 +162,7 @@ const BookRequestForm = () => {
                   <InputLabel>Purpose of update</InputLabel>
                   <Select
                     name="purpose"
-                    value={book.purpose || ''}
+                    value={bookRequest.purpose || ''}
                     onChange={handleChange}
                     label="Issued To"
                   >
@@ -169,12 +174,12 @@ const BookRequestForm = () => {
                   </Select>
                 </FormControl>
                 )}
-               { id && book.purpose === 1 && (
+               { id && bookRequest.purpose === 1 && (
                 <TextField
                   label="Return Date"
                   type="date"
                   name="returnDate"
-                  value={book.returnDate}
+                  value={bookRequest.returnDate}
                   onChange={handleChange}
                   fullWidth
                   InputLabelProps={{ shrink: true }}

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, TextField, Button, Typography, Paper } from '@mui/material';
+import { Container, TextField, Button, Typography, Paper ,Box} from '@mui/material';
 import API from '../services/api';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const navigate = useNavigate();
+  const backgroundImage = 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1350&q=80';
 
   const handleReset = async () => {
     if (!email.trim() || !newPassword.trim()) return alert('Fill in all fields');
@@ -23,6 +24,17 @@ const ForgotPassword = () => {
   };
 
   return (
+     <Box
+          sx={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            height: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        > 
     <Container maxWidth="xs">
       <Paper elevation={6} sx={{ padding: 4, marginTop: 8 }}>
         <Typography variant="h5" gutterBottom>Forgot Password</Typography>
@@ -31,6 +43,7 @@ const ForgotPassword = () => {
         <Button variant="contained" fullWidth sx={{ mt: 2 }} onClick={handleReset}>Reset Password</Button>
       </Paper>
     </Container>
+     </Box>
   );
 };
 

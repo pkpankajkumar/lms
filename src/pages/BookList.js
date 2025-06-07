@@ -10,32 +10,62 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const BookList = () => {
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState(null);
 
   useEffect(() => {
+    fetchBooks();
+  }, []);
+
+  const fetchBooks = () => {
     axios
       .get('http://localhost:5000/books')
       .then((res) => setBooks(res?.data))
       .catch((err) => console.error(err));
-  }, []);
+  };
 
   const handleEdit = (id) => {
     navigate(`/books/edit/${id}`);
   };
 
+  const handleDeleteConfirm = (id) => {
+    setBookToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    axios
+      .delete(`http://localhost:5000/books/${bookToDelete}`)
+      .then(() => {
+        setBooks((prevBooks) => prevBooks.filter((book) => book.id !== bookToDelete));
+        setDeleteDialogOpen(false);
+        setBookToDelete(null);
+      })
+      .catch((err) => {
+        console.error(err);
+        setDeleteDialogOpen(false);
+      });
+  };
+
   const filteredBooks = books.filter((book) => {
     const lowerSearch = searchTerm.toLowerCase();
-
     return (
       (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
       (book.author?.toLowerCase?.().includes(lowerSearch) ?? false) ||
@@ -91,15 +121,24 @@ const BookList = () => {
                         color="primary"
                         onClick={() => handleEdit(book.id)}
                         startIcon={<EditIcon />}
+                        sx={{ mr: 1 }}
                       >
                         Edit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => handleDeleteConfirm(book.id)}
+                        startIcon={<DeleteIcon />}
+                      >
+                        Delete
                       </Button>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} align="center">
+                  <TableCell colSpan={3} align="center">
                     No matching records found.
                   </TableCell>
                 </TableRow>
@@ -108,6 +147,22 @@ const BookList = () => {
           </Table>
         </Box>
       </Box>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Are you sure you want to delete this book?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

@@ -20,8 +20,25 @@ import EditIcon from '@mui/icons-material/Edit';
 const BookRequest = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
+  const [book, setBook] = useState([]);
+  const [users, setUsers] = useState([]);
+
   const [searchTerm, setSearchTerm] = useState('');
   const user = JSON.parse(localStorage.getItem('user')); // <-- Parse stored user JSON
+  useEffect(() => {
+    axios
+      .get('http://localhost:5000/users')
+      .then((res) => setUsers(res?.data))
+      .catch((err) => console.error(err));
+  }, []);
+
+   useEffect(() => {
+        axios
+          .get('http://localhost:5000/books')
+          .then((res) => setBook(res?.data))
+          .catch((err) => console.error(err));
+    },[]);
+
 
   useEffect(() => {
     axios
@@ -29,6 +46,8 @@ const BookRequest = () => {
       .then((res) => setData(res?.data))
       .catch((err) => console.error(err));
   }, []);
+
+
 
   const handleEdit = (id) => {
     navigate(`/book-request-list/edit/${id}`);
@@ -45,6 +64,8 @@ const BookRequest = () => {
     );
   })
   .filter((book) => {
+    if (user?.role === 'admin') return true; // Admin sees all data
+
     const issuedToStr = String(book.issuedTo).trim().toLowerCase();
     const userNameStr = String(user?.name || '').trim().toLowerCase();
     const userIdStr = String(user?.id || '').trim().toLowerCase();
@@ -85,7 +106,6 @@ const BookRequest = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Book Title</TableCell>
-                <TableCell>Author</TableCell>
                 <TableCell>Issued To</TableCell>
                 <TableCell>Issued From Date</TableCell>
                 <TableCell>Issued To Date</TableCell>
@@ -95,14 +115,13 @@ const BookRequest = () => {
             </TableHead>
             <TableBody>
               {filteredData.length > 0 ? (
-                filteredData.map((book) => (
-                  <TableRow key={book.id}>
-                    <TableCell>{book.title}</TableCell>
-                    <TableCell>{book.author}</TableCell>
-                    <TableCell>{book.issuedTo || '-'}</TableCell>
-                    <TableCell>{book.fromDate || '-'}</TableCell>
-                    <TableCell>{book.toDate || '-'}</TableCell>
-                    <TableCell>{book.status || '-'}</TableCell>
+                filteredData.map((req) => (
+                  <TableRow key={req.id}>
+                    <TableCell>  {book.find((b) => b.id == req.bookId)?.title || '-'}</TableCell>
+                    <TableCell>{users.find((b) => b.id == req.issuedTo)?.name || '-'}</TableCell>
+                    <TableCell>{req.fromDate || '-'}</TableCell>
+                    <TableCell>{req.toDate || '-'}</TableCell>
+                    <TableCell>{req.status || '-'}</TableCell>
 
                     {/* <TableCell>
                       <Button

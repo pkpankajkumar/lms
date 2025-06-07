@@ -16,32 +16,64 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const BookIssue = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [users, setUsers] = useState([]);
+  const [book, setBook] = useState([]);
 
   useEffect(() => {
+    axios
+      .get('http://localhost:5000/users')
+      .then((res) => setUsers(res?.data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:5000/books')
+      .then((res) => setBook(res?.data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  useEffect(() => {
+    fetchBookIssues();
+  }, []);
+
+  const fetchBookIssues = () => {
     axios
       .get('http://localhost:5000/bookIssue')
       .then((res) => setData(res?.data))
       .catch((err) => console.error(err));
-  }, []);
+  };
 
   const handleEdit = (id) => {
     navigate(`/book-issue-list/edit/${id}`);
   };
 
-  const filteredData = data.filter((book) => {
-  const lowerSearch = searchTerm.toLowerCase();
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this record?')) {
+      try {
+        await axios.delete(`http://localhost:5000/bookIssue/${id}`);
+        setData(data.filter((entry) => entry.id !== id));
+      } catch (error) {
+        console.error('Error deleting record:', error);
+      }
+    }
+  };
 
-  return (
-    (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
-    (book.author?.toLowerCase?.().includes(lowerSearch) ?? false) ||
-    (typeof book.issuedTo === 'string' && book.issuedTo.toLowerCase().includes(lowerSearch))
-  );
-});
+  const filteredData = data.filter((book) => {
+    const lowerSearch = searchTerm.toLowerCase();
+    return (
+      (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
+      (book.author?.toLowerCase?.().includes(lowerSearch) ?? false) ||
+      (typeof book.issuedTo === 'string' &&
+        book.issuedTo.toLowerCase().includes(lowerSearch))
+    );
+  });
 
   return (
     <>
@@ -79,36 +111,50 @@ const BookIssue = () => {
                 <TableCell>Issued To</TableCell>
                 <TableCell>Issued From Date</TableCell>
                 <TableCell>Issued To Date</TableCell>
-                 <TableCell>Status of Order</TableCell>
-                
+                <TableCell>Status of Order</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredData.length > 0 ? (
-                filteredData.map((book) => (
-                  <TableRow key={book.id}>
-                    <TableCell>{book.title}</TableCell>
-                    <TableCell>{book.author}</TableCell>
-                    <TableCell>{book.issuedTo || '-'}</TableCell>
-                    <TableCell>{book.fromDate || '-'}</TableCell>
-                    <TableCell>{book.toDate || '-'}</TableCell>
-                     <TableCell>{book.status || '-'}</TableCell>
+                filteredData.map((req) => (
+                  <TableRow key={req.id}>
+                    <TableCell>
+                      {book.find((b) => b.id == req.bookId)?.title || '-'}
+                    </TableCell>
+                    <TableCell>
+                      {book.find((b) => b.id == req.bookId)?.author || '-'}
+                    </TableCell>
+                    <TableCell>
+                      {users.find((b) => b.id == req.issuedTo)?.name || '-'}
+                    </TableCell>
+                    <TableCell>{req.fromDate || '-'}</TableCell>
+                    <TableCell>{req.toDate || '-'}</TableCell>
+                    <TableCell>{req.status || '-'}</TableCell>
                     <TableCell>
                       <Button
                         variant="outlined"
                         color="primary"
-                        onClick={() => handleEdit(book.id)}
+                        onClick={() => handleEdit(req.id)}
                         startIcon={<EditIcon />}
+                        sx={{ mr: 1 }}
                       >
                         Edit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => handleDelete(req.id)}
+                        startIcon={<DeleteIcon />}
+                      >
+                        Delete
                       </Button>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} align="center">
+                  <TableCell colSpan={7} align="center">
                     No records found.
                   </TableCell>
                 </TableRow>
