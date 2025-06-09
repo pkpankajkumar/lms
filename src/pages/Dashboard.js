@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [rejectedCount, setRejectedCount] = useState(0);
   const [requestCount, setRequestCount] = useState(0);
   const [availableCount, setAvailableCount] = useState(0);
+   const [books, setBooks] = useState([]);
 
  useEffect(() => {
   const fetchData = async () => {
@@ -32,14 +33,12 @@ const Dashboard = () => {
       const issued = fetchedData.filter((item) => item.status === 'Issued').length;
       const rejected = fetchedData.filter((item) => item.status === 'Rejected').length;
       const request = fetchedData.filter((item) => item.status === 'Request').length;
-      const available = fetchedData.filter(
-        (item) => item.status !== 'Issued' && item.status !== 'Request'
-      ).length;
+     
 
       setIssuedCount(issued);
       setRejectedCount(rejected);
       setRequestCount(request);
-      setAvailableCount(available);
+      
     } catch (err) {
       console.error(err);
     }
@@ -47,6 +46,16 @@ const Dashboard = () => {
 
   fetchData();
 }, []);
+
+useEffect(() => {
+  API.get('/api/available-books') // use API instance here
+    .then(res => {
+      setBooks(res?.data || []);
+      setAvailableCount(res?.data.length || 0);
+    })
+    .catch(err => console.error('Failed to fetch books:', err));
+}, []);
+
 
 
   return (
@@ -75,7 +84,7 @@ const Dashboard = () => {
                   key={2}
                   text={`Total Book Available(${availableCount})`}
                   img
-                  url="/book-request-list"
+                  url="/book-available-list"
                   imgUrl="svg/cardArrow.svg"
                   borderColor="#016944"
                   textColor="#282828"

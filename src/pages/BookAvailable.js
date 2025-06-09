@@ -21,7 +21,7 @@ const BookAvailable = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    API.get('/api/books') // use API instance here
+    API.get('/api/available-books') // use API instance here
       .then(res => setBooks(res?.data || []))
       .catch(err => console.error('Failed to fetch books:', err));
   }, []);

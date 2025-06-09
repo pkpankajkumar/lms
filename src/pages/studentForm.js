@@ -44,7 +44,7 @@ const StudentForm = () => {
     try {
       if (id) {
         // Update existing student
-        await API.put(`/api/users/${id}`, student);
+        await API.post(`/api/users/update-user/${id}`, student);
       } else {
         // Add new student
         await API.post('/api/users/register', student);
@@ -109,7 +109,8 @@ const StudentForm = () => {
           <TextField
             label="Mobile No"
             name="mobileNo"
-            value={student.mobileNo}
+            inputProps={{ maxLength: 10 }}
+            maxLength={10}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -123,6 +124,8 @@ const StudentForm = () => {
             fullWidth
             margin="normal"
             required
+            inputProps={{ maxLength: 5 }}
+
           />
 
           <Button

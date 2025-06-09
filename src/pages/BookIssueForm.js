@@ -42,10 +42,11 @@ const BookIssueForm = () => {
     { id: 5, name: 'Request Accept' },
   ];
 
+  
   useEffect(() => {
-    API.get('/api/books')
-      .then((res) => setBookAll(res?.data))
-      .catch((err) => console.error(err));
+    API.get('/api/available-books') // use API instance here
+      .then(res => setBookAll(res?.data || []))
+      .catch(err => console.error('Failed to fetch books:', err));
   }, []);
 
   useEffect(() => {
