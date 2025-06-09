@@ -16,12 +16,12 @@ import {
   DialogContentText,
   DialogActions,
 } from '@mui/material';
-import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import API from '../services/api'; // <-- Your axios instance with baseURL
 
 const Student = () => {
   const navigate = useNavigate();
@@ -35,8 +35,7 @@ const Student = () => {
   }, []);
 
   const fetchStudents = () => {
-    axios
-      .get('http://localhost:5000/users')
+    API.get('/api/users')
       .then((res) => setStudent(res?.data))
       .catch((err) => console.error(err));
   };
@@ -51,8 +50,7 @@ const Student = () => {
   };
 
   const handleDelete = () => {
-    axios
-      .delete(`http://localhost:5000/users/${studentToDelete}`)
+    API.delete(`/api/users/${studentToDelete}`)
       .then(() => {
         setStudent((prev) => prev.filter((s) => s.id !== studentToDelete));
         setDeleteDialogOpen(false);

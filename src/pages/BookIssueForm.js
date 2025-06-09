@@ -11,9 +11,9 @@ import {
   Select,
   Grid
 } from '@mui/material';
-import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
+import API from '../services/api'; // axios instance with baseURL
 
 const BookIssueForm = () => {
   const { id } = useParams();
@@ -34,34 +34,29 @@ const BookIssueForm = () => {
   });
   const [users, setUsers] = useState([]);
 
-  // Mock data – replace with API calls
-  useEffect(() => {
-    axios
-      .get('http://localhost:5000/books')
-      .then((res) => setBookAll(res?.data))
-      .catch((err) => console.error(err));
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get('http://localhost:5000/users')
-      .then((res) => setUsers(res?.data))
-      .catch((err) => console.error(err));
-  }, []);
-
-
   const purposeList = [
     { id: 1, name: 'I want to book return' },
     { id: 2, name: 'I want to book date extend' },
     { id: 3, name: 'Change other information' },
     { id: 4, name: 'Request Reject' },
     { id: 5, name: 'Request Accept' },
-
   ];
 
   useEffect(() => {
+    API.get('/api/books')
+      .then((res) => setBookAll(res?.data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  useEffect(() => {
+    API.get('/api/users')
+      .then((res) => setUsers(res?.data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  useEffect(() => {
     if (id) {
-      axios.get(`http://localhost:5000/bookIssue/${id}`)
+      API.get(`/api/book-issues/${id}`)
         .then(res => setBook(res.data))
         .catch(err => console.error(err));
     }
@@ -71,32 +66,29 @@ const BookIssueForm = () => {
     setBook({ ...book, [e.target.name]: e.target.value });
   };
 
-
-  console.log("book", book)
-
   const handleSubmit = async (e) => {
+    e.preventDefault();
 
     let newRequest;
 
     if (book.returnDate !== '' && (book.purpose === 1 || book.purpose == "1")) {
-      newRequest = { ...book, isBookIssued: 'NO', status: 'Returned' }
-
+      newRequest = { ...book, isBookIssued: 'NO', status: 'Returned' };
     } else if (book.purpose === 4 || book.purpose == "4") {
-
-      newRequest = { ...book, isBookIssued: 'NO', status: 'Rejected' }
+      newRequest = { ...book, isBookIssued: 'NO', status: 'Rejected' };
     } else {
-      newRequest = { ...book, isBookIssued: 'YES', status: 'Issued' }
-
+      newRequest = { ...book, isBookIssued: 'YES', status: 'Issued' };
     }
 
-
-    e.preventDefault();
-    if (id) {
-      await axios.put(`http://localhost:5000/bookIssue/${id}`, newRequest);
-    } else {
-      await axios.post('http://localhost:5000/bookIssue', newRequest);
+    try {
+      if (id) {
+        await API.put(`/api/book-issues/${id}`, newRequest);
+      } else {
+        await API.post('/api/book-issues/issue-book', newRequest);
+      }
+      navigate('/book-issue-list');
+    } catch (error) {
+      console.error('Error submitting form:', error);
     }
-    navigate('/book-issue-list');
   };
 
   return (
@@ -108,11 +100,13 @@ const BookIssueForm = () => {
           <Button onClick={() => navigate(-1)} sx={{ mb: 2 }}>
             ← Back
           </Button>
-          <Typography variant="h4" gutterBottom>{id ? 'Return/Extend Issued Book' : 'Issue Book'}</Typography>
+          <Typography variant="h4" gutterBottom>
+            {id ? 'Return/Extend Issued Book' : 'Issue Book'}
+          </Typography>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={12} sm={6}>
-                <FormControl fullWidth >
+              <Grid item xs={12}>
+                <FormControl fullWidth>
                   <InputLabel>Book Title</InputLabel>
                   <Select
                     name="bookId"
@@ -125,15 +119,6 @@ const BookIssueForm = () => {
                     ))}
                   </Select>
                 </FormControl>
-
-                {/* <TextField
-                  label="Book Author"
-                  name="author"
-                  value={book.author}
-                  onChange={handleChange}
-                  fullWidth
-                  sx={{ mt: 2 }}
-                /> */}
 
                 <FormControl fullWidth sx={{ mt: 2 }}>
                   <InputLabel>Issued To</InputLabel>
@@ -183,6 +168,7 @@ const BookIssueForm = () => {
                   InputLabelProps={{ shrink: true }}
                   sx={{ mt: 2 }}
                 />
+
                 {id && (
                   <FormControl fullWidth sx={{ mt: 2 }}>
                     <InputLabel>Purpose of update</InputLabel>
@@ -190,7 +176,7 @@ const BookIssueForm = () => {
                       name="purpose"
                       value={book.purpose || ''}
                       onChange={handleChange}
-                      label="Issued To"
+                      label="Purpose of update"
                     >
                       {purposeList.map((perpose) => (
                         <MenuItem key={perpose.id} value={perpose.id}>
@@ -200,6 +186,7 @@ const BookIssueForm = () => {
                     </Select>
                   </FormControl>
                 )}
+
                 {id && book.purpose === 1 && (
                   <TextField
                     label="Return Date"
@@ -213,18 +200,12 @@ const BookIssueForm = () => {
                   />
                 )}
 
-
                 <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
-                  {id ? 'Submit' : 'Submit'}
+                  Submit
                 </Button>
               </Grid>
-
-
-
-
             </Grid>
           </form>
-
         </Box>
       </Box>
     </>

@@ -11,9 +11,9 @@ import {
   TableRow,
   TextField
 } from '@mui/material';
-import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
+import API from '../services/api'; // axios instance with baseURL
 
 const BookAvailable = () => {
   const navigate = useNavigate();
@@ -21,9 +21,9 @@ const BookAvailable = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:5000/books')
-      .then(res => setBooks(res?.data))
-      .catch(err => console.error(err));
+    API.get('/api/books') // use API instance here
+      .then(res => setBooks(res?.data || []))
+      .catch(err => console.error('Failed to fetch books:', err));
   }, []);
 
   const filteredBooks = books.filter(book => {

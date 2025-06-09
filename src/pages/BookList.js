@@ -22,6 +22,7 @@ import Header from '../components/Header';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import API from '../services/api';
 
 const BookList = () => {
   const navigate = useNavigate();
@@ -34,11 +35,13 @@ const BookList = () => {
     fetchBooks();
   }, []);
 
-  const fetchBooks = () => {
-    axios
-      .get('http://localhost:5000/books')
-      .then((res) => setBooks(res?.data))
-      .catch((err) => console.error(err));
+  const fetchBooks = async () => {
+    try {
+      const res = await API.get('/api/books');
+      setBooks(res?.data || []);
+    } catch (err) {
+      console.error('Failed to fetch books:', err);
+    }
   };
 
   const handleEdit = (id) => {
@@ -50,25 +53,25 @@ const BookList = () => {
     setDeleteDialogOpen(true);
   };
 
-  const handleDelete = () => {
-    axios
-      .delete(`http://localhost:5000/books/${bookToDelete}`)
-      .then(() => {
-        setBooks((prevBooks) => prevBooks.filter((book) => book.id !== bookToDelete));
-        setDeleteDialogOpen(false);
-        setBookToDelete(null);
-      })
-      .catch((err) => {
-        console.error(err);
-        setDeleteDialogOpen(false);
-      });
+  const handleDelete = async () => {
+    if (!bookToDelete) return;
+
+    try {
+      await API.delete(`/api/books/${bookToDelete}`);
+      setBooks((prevBooks) => prevBooks.filter((book) => book.id !== bookToDelete));
+    } catch (err) {
+      console.error('Failed to delete book:', err);
+    } finally {
+      setDeleteDialogOpen(false);
+      setBookToDelete(null);
+    }
   };
 
   const filteredBooks = books.filter((book) => {
     const lowerSearch = searchTerm.toLowerCase();
     return (
-      (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
-      (book.author?.toLowerCase?.().includes(lowerSearch) ?? false) ||
+      (book.title?.toLowerCase().includes(lowerSearch) ?? false) ||
+      (book.author?.toLowerCase().includes(lowerSearch) ?? false) ||
       (typeof book.issuedTo === 'string' && book.issuedTo.toLowerCase().includes(lowerSearch))
     );
   });
@@ -148,7 +151,6 @@ const BookList = () => {
         </Box>
       </Box>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>

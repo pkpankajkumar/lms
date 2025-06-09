@@ -11,68 +11,64 @@ import {
   TableRow,
   TextField,
 } from '@mui/material';
-import axios from 'axios';
+import AddIcon from '@mui/icons-material/Add';
+// import EditIcon from '@mui/icons-material/Edit';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
+import API from '../services/api'; // axios instance with baseURL
 
 const BookRequest = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [book, setBook] = useState([]);
   const [users, setUsers] = useState([]);
-
   const [searchTerm, setSearchTerm] = useState('');
-  const user = JSON.parse(localStorage.getItem('user')); // <-- Parse stored user JSON
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  // Fetch all users
   useEffect(() => {
-    axios
-      .get('http://localhost:5000/users')
+    API.get('/api/users')
       .then((res) => setUsers(res?.data))
       .catch((err) => console.error(err));
   }, []);
 
-   useEffect(() => {
-        axios
-          .get('http://localhost:5000/books')
-          .then((res) => setBook(res?.data))
-          .catch((err) => console.error(err));
-    },[]);
-
-
+  // Fetch all books
   useEffect(() => {
-    axios
-      .get('http://localhost:5000/bookIssue')
-      .then((res) => setData(res?.data))
+    API.get('/api/books')
+      .then((res) => setBook(res?.data))
       .catch((err) => console.error(err));
   }, []);
 
-
+  // Fetch all book issues
+  useEffect(() => {
+    API.get('/api/book-issues')
+      .then((res) => setData(res?.data))
+      .catch((err) => console.error(err));
+  }, []);
 
   const handleEdit = (id) => {
     navigate(`/book-request-list/edit/${id}`);
   };
 
- const filteredData = data
-  .filter((book) => {
-    const lowerSearch = searchTerm.toLowerCase();
-    return (
-      (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
-      (book.author?.toLowerCase?.().includes(lowerSearch) ?? false) ||
-      (typeof book.issuedTo === 'string' &&
-        book.issuedTo.toLowerCase().includes(lowerSearch))
-    );
-  })
-  .filter((book) => {
-    if (user?.role === 'admin') return true; // Admin sees all data
+  // const filteredData = data
+  //   .filter((book) => {
+  //     const lowerSearch = searchTerm.toLowerCase();
+  //     return (
+  //       (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
+  //       (book.author?.toLowerCase?.().includes(lowerSearch) ?? false) ||
+  //       (typeof book.issuedTo === 'string' &&
+  //         book.issuedTo.toLowerCase().includes(lowerSearch))
+  //     );
+  //   })
+  //   .filter((book) => {
+  //     if (user?.role === 'admin') return true;
 
-    const issuedToStr = String(book.issuedTo).trim().toLowerCase();
-    const userNameStr = String(user?.name || '').trim().toLowerCase();
-    const userIdStr = String(user?.id || '').trim().toLowerCase();
+  //     const issuedToStr = String(book.issuedTo).trim().toLowerCase();
+  //     const userNameStr = String(user?.name || '').trim().toLowerCase();
+  //     const userIdStr = String(user?.id || '').trim().toLowerCase();
 
-    return issuedToStr === userNameStr || issuedToStr === userIdStr;
-  });
-
+  //     return issuedToStr === userNameStr || issuedToStr === userIdStr;
+  //   });
 
   return (
     <>
@@ -81,7 +77,7 @@ const BookRequest = () => {
         <Sidebar />
         <Box p={4} sx={{ flexGrow: 1 }}>
           <Typography variant="h4" gutterBottom>
-          Book Request/Order
+            Book Request/Order
           </Typography>
 
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -110,29 +106,17 @@ const BookRequest = () => {
                 <TableCell>Issued From Date</TableCell>
                 <TableCell>Issued To Date</TableCell>
                 <TableCell>Status of Order</TableCell>
-                {/* <TableCell>Actions</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredData.length > 0 ? (
-                filteredData.map((req) => (
+              {data.length > 0 ? (
+                data.map((req) => (
                   <TableRow key={req.id}>
-                    <TableCell>  {book.find((b) => b.id == req.bookId)?.title || '-'}</TableCell>
-                    <TableCell>{users.find((b) => b.id == req.issuedTo)?.name || '-'}</TableCell>
+                    <TableCell>{book.find((b) => b.id == req.bookId)?.title || '-'}</TableCell>
+                    <TableCell>{users.find((u) => u.id == req.issuedTo)?.name || '-'}</TableCell>
                     <TableCell>{req.fromDate || '-'}</TableCell>
                     <TableCell>{req.toDate || '-'}</TableCell>
                     <TableCell>{req.status || '-'}</TableCell>
-
-                    {/* <TableCell>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => handleEdit(book.id)}
-                        startIcon={<EditIcon />}
-                      >
-                        Edit
-                      </Button>
-                    </TableCell> */}
                   </TableRow>
                 ))
               ) : (
