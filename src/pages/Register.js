@@ -37,6 +37,7 @@ const Register = () => {
         email,
         password,
         mobileNo,
+        rollNo,
         role: 'user', // Default role
       });
 
@@ -77,6 +78,7 @@ const Register = () => {
             margin="normal"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
           />
           <TextField
             label="Email"
@@ -84,6 +86,7 @@ const Register = () => {
             margin="normal"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <TextField
             label="Password"
@@ -92,6 +95,7 @@ const Register = () => {
             margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <TextField
             label="Mobile No"
@@ -99,6 +103,8 @@ const Register = () => {
             margin="normal"
             value={mobileNo}
             onChange={(e) => setMobileNo(e.target.value)}
+            required
+            inputProps={{ maxLength: 10 }}
           />
           <TextField
             label="Roll No"
@@ -106,6 +112,8 @@ const Register = () => {
             margin="normal"
             value={rollNo}
             onChange={(e) => setRollNo(e.target.value)}
+            inputProps={{ maxLength: 5 }}
+            required
           />
 
           <Button

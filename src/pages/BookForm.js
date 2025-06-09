@@ -32,7 +32,7 @@ const BookForm = () => {
     e.preventDefault();
     try {
       if (id) {
-        await API.put(`/api/books/${id}`, book);
+        await API.post(`/api/books/add-book/${id}`, book);
       } else {
         await API.post('/api/books/add-book', book);
       }

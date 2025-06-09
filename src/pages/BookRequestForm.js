@@ -42,7 +42,7 @@ const BookRequestForm = () => {
 
   // Fetch books
   useEffect(() => {
-    API.get('/api/books')
+    API.get('/api/available-books')
       .then((res) => setBooksAvailabs(res?.data))
       .catch((err) => console.error(err));
   }, []);

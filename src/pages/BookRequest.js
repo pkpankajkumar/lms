@@ -50,25 +50,25 @@ const BookRequest = () => {
     navigate(`/book-request-list/edit/${id}`);
   };
 
-  // const filteredData = data
-  //   .filter((book) => {
-  //     const lowerSearch = searchTerm.toLowerCase();
-  //     return (
-  //       (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
-  //       (book.author?.toLowerCase?.().includes(lowerSearch) ?? false) ||
-  //       (typeof book.issuedTo === 'string' &&
-  //         book.issuedTo.toLowerCase().includes(lowerSearch))
-  //     );
-  //   })
-  //   .filter((book) => {
-  //     if (user?.role === 'admin') return true;
+  const lowerSearch = searchTerm.toLowerCase();
 
-  //     const issuedToStr = String(book.issuedTo).trim().toLowerCase();
-  //     const userNameStr = String(user?.name || '').trim().toLowerCase();
-  //     const userIdStr = String(user?.id || '').trim().toLowerCase();
+const filteredData = data
+  .filter((book) => {
+    return (
+      (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
+      (book.status?.toLowerCase?.().includes(lowerSearch) ?? false)
+    );
+  })
+  .filter((book) => {
+    if (user?.role === 'admin') return true;
 
-  //     return issuedToStr === userNameStr || issuedToStr === userIdStr;
-  //   });
+    const issuedToStr = String(book.issuedTo).trim();
+    const userIdStr = String(user?.id || '').trim();
+
+    return issuedToStr === userIdStr;
+  });
+
+
 
   return (
     <>
@@ -109,8 +109,8 @@ const BookRequest = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.length > 0 ? (
-                data.map((req) => (
+              {filteredData.length > 0 ? (
+                filteredData.map((req) => (
                   <TableRow key={req.id}>
                     <TableCell>{book.find((b) => b.id == req.bookId)?.title || '-'}</TableCell>
                     <TableCell>{users.find((u) => u.id == req.issuedTo)?.name || '-'}</TableCell>
