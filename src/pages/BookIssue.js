@@ -11,12 +11,12 @@ import {
   TableRow,
   TextField,
 } from '@mui/material';
-import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import API from '../services/api'; // your axios instance with baseURL
 
 const BookIssue = () => {
   const navigate = useNavigate();
@@ -26,16 +26,14 @@ const BookIssue = () => {
   const [book, setBook] = useState([]);
 
   useEffect(() => {
-    axios
-      .get('http://localhost:5000/users')
-      .then((res) => setUsers(res?.data))
+    API.get('/api/users')
+      .then((res) => setUsers(res?.data || []))
       .catch((err) => console.error(err));
   }, []);
 
   useEffect(() => {
-    axios
-      .get('http://localhost:5000/books')
-      .then((res) => setBook(res?.data))
+    API.get('/api/books')
+      .then((res) => setBook(res?.data || []))
       .catch((err) => console.error(err));
   }, []);
 
@@ -44,11 +42,12 @@ const BookIssue = () => {
   }, []);
 
   const fetchBookIssues = () => {
-    axios
-      .get('http://localhost:5000/bookIssue')
-      .then((res) => setData(res?.data))
+    API.get('/api/book-issues')
+      .then((res) => setData(res?.data || []))
       .catch((err) => console.error(err));
   };
+
+  console.log("data",data)
 
   const handleEdit = (id) => {
     navigate(`/book-issue-list/edit/${id}`);
@@ -57,7 +56,7 @@ const BookIssue = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this record?')) {
       try {
-        await axios.delete(`http://localhost:5000/bookIssue/${id}`);
+        await API.delete(`/api/book-issues/${id}`);
         setData(data.filter((entry) => entry.id !== id));
       } catch (error) {
         console.error('Error deleting record:', error);
@@ -65,15 +64,15 @@ const BookIssue = () => {
     }
   };
 
-  const filteredData = data.filter((book) => {
-    const lowerSearch = searchTerm.toLowerCase();
-    return (
-      (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
-      (book.author?.toLowerCase?.().includes(lowerSearch) ?? false) ||
-      (typeof book.issuedTo === 'string' &&
-        book.issuedTo.toLowerCase().includes(lowerSearch))
-    );
-  });
+  // const filteredData = data.filter((book) => {
+  //   const lowerSearch = searchTerm.toLowerCase();
+  //   return (
+  //     (book.title?.toLowerCase?.().includes(lowerSearch) ?? false) ||
+  //     (book.author?.toLowerCase?.().includes(lowerSearch) ?? false) ||
+  //     (typeof book.issuedTo === 'string' &&
+  //       book.issuedTo.toLowerCase().includes(lowerSearch))
+  //   );
+  // });
 
   return (
     <>
@@ -116,17 +115,17 @@ const BookIssue = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredData.length > 0 ? (
-                filteredData.map((req) => (
+              {data.length > 0 ? (
+                data.map((req) => (
                   <TableRow key={req.id}>
                     <TableCell>
-                      {book.find((b) => b.id == req.bookId)?.title || '-'}
+                      {book.find((b) => b.id === req.bookId)?.title || '-'}
                     </TableCell>
                     <TableCell>
-                      {book.find((b) => b.id == req.bookId)?.author || '-'}
+                      {book.find((b) => b.id === req.bookId)?.author || '-'}
                     </TableCell>
                     <TableCell>
-                      {users.find((b) => b.id == req.issuedTo)?.name || '-'}
+                      {users.find((u) => u.id === req.issuedTo)?.name || '-'}
                     </TableCell>
                     <TableCell>{req.fromDate || '-'}</TableCell>
                     <TableCell>{req.toDate || '-'}</TableCell>

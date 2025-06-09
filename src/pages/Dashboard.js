@@ -5,6 +5,7 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import CardGenerator from './CardGenerator'
 import axios from 'axios';
+import API from '../services/api';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -17,13 +18,13 @@ const Dashboard = () => {
   const [availableCount, setAvailableCount] = useState(0);
 
  useEffect(() => {
-  axios
-    .get('http://localhost:5000/bookIssue')
-    .then((res) => {
+  const fetchData = async () => {
+    try {
+      const res = await API.get('api/book-issues');
       let fetchedData = res?.data || [];
 
       if (user?.role !== 'admin') {
-        fetchedData = fetchedData.filter((item) => item.issuedTo === user.username);
+        fetchedData = fetchedData.filter((item) => item.issuedTo === user.id);
       }
 
       setData(fetchedData);
@@ -39,9 +40,14 @@ const Dashboard = () => {
       setRejectedCount(rejected);
       setRequestCount(request);
       setAvailableCount(available);
-    })
-    .catch((err) => console.error(err));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchData();
 }, []);
+
 
   return (
     <>

@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Container, TextField, Button, Typography, Box, Paper,Select,MenuItem ,FormControl,InputLabel } from '@mui/material';
 import API from '../services/api';
 
-const backgroundImage = 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1350&q=80';
+//const backgroundImage = 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1350&q=80';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -13,28 +13,63 @@ const Login = () => {
   
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    if (!email.trim() || !password.trim() || !role.trim()) return alert('Please fill all fields');
-    try {
-      const res = await API.get(`/users?email=${email}&password=${password}&role=${role}`);
-      if (res.data.length > 0) {
-        localStorage.setItem('user', JSON.stringify(res.data[0]));
+  // const handleLogin = async () => {
+  //   if (!email.trim() || !password.trim() || !role.trim()) return alert('Please fill all fields');
+  //   try {
+  //     const res = await API.get(`/users?email=${email}&password=${password}`);
+  //     if (res.data.length > 0) {
+  //       localStorage.setItem('user', JSON.stringify(res.data[0]));
 
-        console.log("res",res)
-        navigate('/dashboard');
-      } else {
-        alert('Invalid credentials');
-      }
-    } catch (err) {
+  //       console.log("res",res)
+  //       navigate('/dashboard');
+  //     } else {
+  //       alert('Invalid credentials');
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert('Network error');
+  //   }
+  // };
+
+  const handleLogin = async () => {
+  // basic client-side validation
+  if (!email.trim() || !password.trim() || !role.trim()) {
+    return alert('Please fill all fields');
+  }
+
+  try {
+    // POST JSON in the body
+    const { data } = await API.post(
+      '/api/auth/login',
+      { email, password, role },          // request payload
+      { withCredentials: true }           // only needed if you rely on cookies
+    );
+
+    console.log("data",data)
+
+    // adjust this to match your backend’s actual response shape
+    if (data && data.email) {
+      localStorage.setItem('user', JSON.stringify(data));
+      // localStorage.setItem('token', data.token); // if you return JWTs
+      navigate('/dashboard');
+    } else {
+      alert('Invalid credentials');
+    }
+  } catch (err) {
+    if (err.response?.status === 401) {
+      alert('Invalid email or password');
+    } else {
       console.error(err);
       alert('Network error');
     }
-  };
+  }
+};
+
 
   return (
     <Box
       sx={{
-        backgroundImage: `url(${backgroundImage})`,
+       color:'#f6f6f9!important',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: '100vh',

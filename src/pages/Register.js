@@ -1,27 +1,49 @@
 import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Paper, Box } from '@mui/material';
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  Box,
+} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import API from '../services/api'; // assumes API is axios instance pointing to json-server
+import API from '../services/api'; // Your configured axios instance
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mobileNo, setMobileNo] = useState('');
   const [name, setName] = useState('');
-
+  const [rollNo, setRollNo] = useState('');
 
   const navigate = useNavigate();
-  const backgroundImage = 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1350&q=80';
 
   const handleRegister = async () => {
-    if (!email.trim() || !password.trim() || !name.trim() || !mobileNo.trim()) return alert('Please fill in all fields');
+    if (!email.trim() || !password.trim() || !name.trim() || !mobileNo.trim()) {
+      return alert('Please fill in all fields');
+    }
+
     try {
-      const res = await API.get(`/users?email=${email}`);
-      if (res.data.length > 0) return alert('Email already registered');
-      await API.post('/users', { email,name, password, role: 'user',mobileNo });
+      // Check if email already exists
+      // const res = await API.get(`/api/users?email=${email}`);
+      // if (res.data.length > 0) {
+      //   return alert('Email already registered');
+      // }
+
+      // Register new user
+      await API.post('/api/users/register', {
+        name,
+        email,
+        password,
+        mobileNo,
+        role: 'user', // Default role
+      });
+
       alert('Registration successful');
       navigate('/login');
     } catch (err) {
+      console.error('Registration error:', err);
       alert('Network error during registration');
     }
   };
@@ -29,60 +51,77 @@ const Register = () => {
   return (
     <Box
       sx={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
         height: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#f0f2f5',
       }}
-    >  <Container maxWidth="xs">
-        <Paper elevation={6} sx={{ padding: 4, backdropFilter: 'blur(4px)', backgroundColor: 'rgba(255,255,255,0.85)' }}>
-          <Typography variant="h5" gutterBottom>
+    >
+      <Container maxWidth="xs">
+        <Paper
+          elevation={6}
+          sx={{
+            padding: 4,
+            backgroundColor: 'rgba(255,255,255,0.95)',
+            borderRadius: 2,
+          }}
+        >
+          <Typography variant="h5" gutterBottom textAlign="center">
             Register
           </Typography>
+
           <TextField
             label="Name"
             fullWidth
             margin="normal"
             value={name}
-            name="name"
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
           />
           <TextField
             label="Email"
             fullWidth
             margin="normal"
             value={email}
-            name="email"
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             label="Password"
             type="password"
             fullWidth
             margin="normal"
-            name="password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
-
           <TextField
             label="Mobile No"
-            type="text"
             fullWidth
             margin="normal"
-            name="mobileNo"
             value={mobileNo}
-            onChange={e => setMobileNo(e.target.value)}
+            onChange={(e) => setMobileNo(e.target.value)}
           />
-          <Button variant="contained" fullWidth sx={{ mt: 2 }} onClick={handleRegister}>
+          <TextField
+            label="Roll No"
+            fullWidth
+            margin="normal"
+            value={rollNo}
+            onChange={(e) => setRollNo(e.target.value)}
+          />
+
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2 }}
+            onClick={handleRegister}
+          >
             Register
           </Button>
+
           <Box mt={2} textAlign="center">
             <Link to="/login" style={{ textDecoration: 'none' }}>
-              <Typography>Already have an account? Login</Typography>
+              <Typography variant="body2">
+                Already have an account? Login
+              </Typography>
             </Link>
           </Box>
         </Paper>
